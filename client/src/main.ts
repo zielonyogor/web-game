@@ -1,4 +1,6 @@
 import * as PIXI from 'pixi.js';
+import { SceneManager } from './core/SceneManager';
+import { TitleScene } from './scenes/TitleScene';
 
 const app = new PIXI.Application();
 
@@ -10,4 +12,7 @@ const app = new PIXI.Application();
     });
 
     document.body.appendChild(app.canvas);
+    
+    SceneManager.init(app);
+    SceneManager.changeScene(new TitleScene());
 })()
