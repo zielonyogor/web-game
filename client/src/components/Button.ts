@@ -5,7 +5,7 @@ export class Button extends PIXI.Container {
     private background: PIXI.Graphics;
     private textLabel: PIXI.Text;
 
-    constructor(text: string, width = 200, height = 60) {
+    constructor(text: string, width = 200, height = 60, style : PIXI.TextStyle) {
         super();
 
         this.eventMode = 'static';
@@ -19,11 +19,7 @@ export class Button extends PIXI.Container {
 
         this.textLabel = new PIXI.Text({
             text,
-            style: {
-            fill: 0x000000,
-            fontSize: 24,
-            align: 'center',
-            },
+            style,
         });
 
         this.textLabel.anchor.set(0.5);

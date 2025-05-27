@@ -1,6 +1,7 @@
 import * as PIXI from "pixi.js";
 import { SceneManager } from "../core/SceneManager";
 import { GameScene } from "./GameScene";
+import { GameStyle } from "../core/GameStyle";
 
 export class TitleScene extends PIXI.Container {
     constructor() {
@@ -14,7 +15,7 @@ export class TitleScene extends PIXI.Container {
 
         const title = new PIXI.Text({
             text: 'GAME',
-            style: style,
+            style: GameStyle.Instance.basicTextStyle,
             x: 200,
             y: 200,
         });

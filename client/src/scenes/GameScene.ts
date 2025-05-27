@@ -1,18 +1,14 @@
 import * as PIXI from "pixi.js";
+import { Player } from "../components/game/Player";
 
 export class GameScene extends PIXI.Container {
-    private player : PIXI.Graphics;
+    private player : Player;
 
     constructor() {
         super();
 
-        this.player = new PIXI.Graphics()
-            .circle(0, 0, 30)
-            .fill(0xffffff);
-        this.player.x = 400;
-        this.player.y = 300;
+        this.player = new Player(100, 100); 
         this.addChild(this.player);
-        console.log('game scene');
 
         this.addEventListeners();
     }
