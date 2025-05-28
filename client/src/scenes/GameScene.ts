@@ -1,38 +1,28 @@
 import * as PIXI from "pixi.js";
 import { Player } from "../components/game/Player";
+import { MainGameUI } from "../components/ui/MainGameUI";
+import { PlayerMovementController } from "../utils/PlayerMovementController";
 
 export class GameScene extends PIXI.Container {
     private player : Player;
+	private playerMovement: PlayerMovementController;
+	public mainGameUI : MainGameUI;
 
-    constructor() {
+    constructor(app: PIXI.Application) {
         super();
+
 
         this.player = new Player(100, 100); 
         this.addChild(this.player);
+		this.playerMovement = new PlayerMovementController(this.player);
 
-        this.addEventListeners();
+		this.mainGameUI = new MainGameUI();
+		this.addChild(this.mainGameUI);
+
+		app.ticker.add(delta => this.update(delta.deltaTime));
     }
 
-    public addEventListeners(){
-		window.addEventListener("keydown", this.downHandler.bind(this), false);
-		window.addEventListener("keyup", this.upHandler.bind(this), false);
-	}
-
-    private downHandler(event:KeyboardEvent) {
-		if (event.key === "ArrowRight") {
-			//MOVE RIGHT
-		}
-		if (event.key === "ArrowDown") {
-			//MOVE DOWN
-		}
-	}
-
-	private upHandler(event:KeyboardEvent) {
-		if (event.key === "ArrowRight") {
-			//STOP MOVING RIGHT
-		}
-		if (event.key === "ArrowDown") {
-			//MOVE DOWN
-		}
+	private update(deltaTime: number) {
+		this.playerMovement.update(deltaTime);
 	}
 }

@@ -5,8 +5,10 @@ import '../style.css';
 export class GameStyle {
     private static _instance: GameStyle;
 
+    public static readonly screenDimension : PIXI.Point = new PIXI.Point(800, 600);
     public basicTextStyle : PIXI.TextStyle;
     public mainColor : PIXI.Color;
+    
 
     constructor() {
         this.mainColor = new PIXI.Color('0x0000ff');
@@ -19,8 +21,7 @@ export class GameStyle {
         }); 
     }
 
-    public static get Instance()
-    {
+    public static get Instance() {
         return this._instance || (this._instance = new this());
     }
 }

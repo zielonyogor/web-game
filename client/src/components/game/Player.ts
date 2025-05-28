@@ -12,5 +12,8 @@ export class Player extends PIXI.Container {
 
         this.x = x;
         this.y = y;
+        this.addChild(this.sprite);
     }
+
+
 }

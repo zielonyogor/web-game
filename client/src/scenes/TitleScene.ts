@@ -4,7 +4,7 @@ import { GameScene } from "./GameScene";
 import { GameStyle } from "../core/GameStyle";
 
 export class TitleScene extends PIXI.Container {
-    constructor() {
+    constructor(app: PIXI.Application) {
         super();
 
         const style = new PIXI.TextStyle({
@@ -33,7 +33,7 @@ export class TitleScene extends PIXI.Container {
         playButton.cursor = 'pointer';
 
         playButton.on('pointerdown', () => {
-            SceneManager.changeScene(new GameScene());
+            SceneManager.changeScene(new GameScene(app));
         });
 
         this.addChild(playButton);
