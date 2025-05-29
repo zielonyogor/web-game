@@ -1,11 +1,27 @@
 // src/components/Button.ts
 import * as PIXI from 'pixi.js';
+import { GameStyle } from '../../core/GameStyle';
+
+interface ButtonProps {
+    text?: string, 
+    width?: number, 
+    height?: number, 
+    style?: PIXI.TextStyle,
+    x?: number,
+    y?: number,
+};
 
 export class Button extends PIXI.Container {
     private background: PIXI.Graphics;
     private textLabel: PIXI.Text;
 
-    constructor(text: string, width = 200, height = 60, style : PIXI.TextStyle) {
+    constructor({
+        text,
+        width = 200,
+        height = 60,
+        x, y,
+        style = GameStyle.Instance.buttonTextStyle
+    } : ButtonProps) {
         super();
 
         this.eventMode = 'static';
@@ -13,7 +29,7 @@ export class Button extends PIXI.Container {
 
         this.background = new PIXI.Graphics()
             .roundRect(0, 0, width, height, 10)
-            .fill(0xf5f5f5);
+            .fill(GameStyle.Instance.primaryColor);
 
         this.addChild(this.background);
 
@@ -27,6 +43,8 @@ export class Button extends PIXI.Container {
         this.textLabel.y = height / 2;
         this.addChild(this.textLabel);
 
+        this.x = x ?? 0;
+        this.y = y ?? 0;
     }
 
     public onClick(fn: () => void) {

@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js';
 import { SceneManager } from './core/SceneManager';
 import { TitleScene } from './scenes/TitleScene';
 import { GameStyle } from './core/GameStyle';
-import { GameScene } from './scenes/GameScene';
+import "./style.css";
 
 const app = new PIXI.Application();
 
@@ -16,6 +16,6 @@ const app = new PIXI.Application();
     document.body.appendChild(app.canvas);
     
     SceneManager.init(app);
-    //SceneManager.changeScene(new TitleScene(app));
-    SceneManager.changeScene(new GameScene(app));
+    SceneManager.changeScene(new TitleScene(app));
+    //SceneManager.changeScene(new GameScene(app));
 })()

@@ -1,15 +1,15 @@
 import * as PIXI from "pixi.js";
 import { SceneManager } from "../core/SceneManager";
+import { GameScene } from "./GameScene";
 import { GameStyle } from "../core/GameStyle";
 import { Button } from "../components/ui/Button";
-import { LobbyScene } from "./LobbyScene";
 
-export class TitleScene extends PIXI.Container {
+export class LobbyScene extends PIXI.Container {
     constructor(app: PIXI.Application) {
         super();
 
         const title = new PIXI.Text({
-            text: 'Game',
+            text: 'Waiting for player...',
             style: GameStyle.Instance.basicTextStyle,
             x: 200,
             y: 200,
@@ -17,7 +17,7 @@ export class TitleScene extends PIXI.Container {
         this.addChild(title);
 
         const playButton = new Button({
-            text: "Host game",
+            text: "Start game",
             x: 200,
             y: 400
         });
@@ -27,7 +27,7 @@ export class TitleScene extends PIXI.Container {
         playButton.cursor = 'pointer';
 
         playButton.on('pointerdown', () => {
-            SceneManager.changeScene(new LobbyScene(app));
+            SceneManager.changeScene(new GameScene(app));
         });
 
         this.addChild(playButton);

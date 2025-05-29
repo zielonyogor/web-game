@@ -1,9 +1,11 @@
 import * as PIXI from "pixi.js";
 
-class Collider{
+export class Collider{
     public bounds: PIXI.Rectangle;
     public isTrigger: boolean;
     public parent: PIXI.Container;
+
+    public onTrigger?: (other: Collider) => void;
 
     constructor(parent: PIXI.Container, width: number, height: number, isTrigger = false) {
         this.bounds = new PIXI.Rectangle(0, 0, width, height);
@@ -17,5 +19,7 @@ class Collider{
         this.bounds.y = globalPosition.y;
     }
 
-    
+    public addOnTrigger(fn: (other : Collider) => void) {
+        this.onTrigger = fn;
+    }
 }
