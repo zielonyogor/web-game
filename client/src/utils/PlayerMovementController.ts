@@ -2,7 +2,7 @@ import * as PIXI from "pixi.js";
 import { Keyboard, type Key } from "./Keyboard";
 import { GameStyle } from "../core/GameStyle";
 import { Player } from "../components/game/Player";
-
+import { ColliderManager } from "../core/ColliderManager";
 
 
 export class PlayerMovementController{
@@ -22,12 +22,6 @@ export class PlayerMovementController{
     private drag: number = 0.1;
 
     
-    /**
-     * little class to control the movement of a character and add movement boundaries
-     * @param player - sprite of the player
-     * @param mapRect - player movement boundaries
-     * @param keys - the keys used to control the character in the order of top-right-down-left
-     */
     constructor(
         player: Player,  
         keys:string[] = ["W","D","S","A"]
@@ -56,11 +50,6 @@ export class PlayerMovementController{
         this.velocityX = -this.speed;
     }
 
-
-    /**
-     * updates player velocity and makes sure it doesn't exceed the boundaries
-     * @param deltaTime delta time 
-     */
     public update(deltaTime: number){
         if(this.velocityY != 0 && this.keyTop.isUp && this.keyDown.isUp){
             this.velocityY *= this.drag;
@@ -76,34 +65,23 @@ export class PlayerMovementController{
             }
         }
 
-        let newPlayerX:number = this.player.x + this.velocityX;
-        let newPlayerY:number = this.player.y + this.velocityY;
+        const newX = this.player.x + this.velocityX;
+        const newY = this.player.y + this.velocityY;
 
-        if(newPlayerX < 0){
-            newPlayerX = 0;
-        }
-        if(newPlayerX > this.mapRect.width){
-            newPlayerX = this.mapRect.width;
-        }
-        if(newPlayerY < 0){
-            newPlayerY = 0;
-        }
-        if(newPlayerY > this.mapRect.height){
-            newPlayerY = this.mapRect.height;
-        }
+        const withinBoundsX = newX >= 0 && newX <= this.mapRect.width;
+        const withinBoundsY = newY >= 0 && newY <= this.mapRect.height;
 
-        if(this.player.x != newPlayerX || this.player.y != newPlayerY){
-            this.player.rotation = Math.atan2(newPlayerY - this.player.y, newPlayerX - this.player.x);
-        }
+        const blocked = ColliderManager.willCollide(this.player.collider, newX, newY);
 
-        this.player.x = newPlayerX;
-        this.player.y = newPlayerY;
+        if (!blocked && withinBoundsX && withinBoundsY) {
+            this.player.rotation = Math.atan2(newY - this.player.y, newX - this.player.x);
+            this.player.x = newX;
+            this.player.y = newY;
+	        ColliderManager.checkTriggers(this.player.collider);
+        }
     }
 
 
-    /**
-     * returns the players position on the map
-     */
     public getPlayerPosition():PIXI.Point{
         return new PIXI.Point(this.player.x, this.player.y);
     }

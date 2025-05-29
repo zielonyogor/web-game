@@ -6,6 +6,9 @@ import "./style.css";
 
 const app = new PIXI.Application();
 
+
+(window as any).__PIXI_APP__ = app;
+
 (async () => {
     await app.init({
       background: 0x1099bb, 

@@ -1,5 +1,12 @@
 import * as PIXI from "pixi.js";
 
+interface ColliderProps {
+    parent: PIXI.Container, 
+    width?: number, 
+    height?: number, 
+    isTrigger?: boolean,
+}
+
 export class Collider{
     public bounds: PIXI.Rectangle;
     public isTrigger: boolean;
@@ -7,16 +14,33 @@ export class Collider{
 
     public onTrigger?: (other: Collider) => void;
 
-    constructor(parent: PIXI.Container, width: number, height: number, isTrigger = false) {
-        this.bounds = new PIXI.Rectangle(0, 0, width, height);
+    constructor({
+        parent, 
+        width, 
+        height, 
+        isTrigger = false
+    } : ColliderProps) {
         this.isTrigger = isTrigger;
         this.parent = parent;
+
+        const bounds = parent.getLocalBounds();
+        const finalWidth = width ?? bounds.width;
+        const finalHeight = height ?? bounds.height;
+
+        this.bounds = new PIXI.Rectangle(0, 0, finalWidth, finalHeight);
+
+        const sprite = new PIXI.Graphics()
+            .rect(this.bounds.x, this.bounds.y, finalWidth, finalHeight)
+            .stroke({ color: 0xff00ff, width: 1 });
+        this.parent.addChild(sprite);   
     }
 
     public update(): void {
-        const globalPosition = this.parent.getGlobalPosition();
-        this.bounds.x = globalPosition.x;
-        this.bounds.y = globalPosition.y;
+        const global = this.parent.getGlobalPosition();
+        const localBounds = this.parent.getLocalBounds();
+
+        this.bounds.x = global.x + localBounds.x;
+        this.bounds.y = global.y + localBounds.y;
     }
 
     public addOnTrigger(fn: (other : Collider) => void) {
