@@ -12,9 +12,10 @@ export class ColliderManager {
     }
 
     public static willCollide(collider: Collider, newX: number, newY: number): boolean {
+        collider.update();
         const tempBounds = collider.bounds.clone();
-        tempBounds.x = newX;
-        tempBounds.y = newY;
+        tempBounds.x = newX - tempBounds.width / 2;
+        tempBounds.y = newY - tempBounds.height / 2;
 
         for (const other of this.colliders) {
             if (other === collider) continue;

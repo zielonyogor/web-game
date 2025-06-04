@@ -3,6 +3,8 @@ import { SceneManager } from './core/SceneManager';
 import { TitleScene } from './scenes/TitleScene';
 import { GameStyle } from './core/GameStyle';
 import "./style.css";
+import { NetworkManager } from './net/NetworkManager';
+import { GameScene } from './scenes/GameScene';
 
 const app = new PIXI.Application();
 
@@ -17,8 +19,10 @@ const app = new PIXI.Application();
     });
 
     document.body.appendChild(app.canvas);
+
+    NetworkManager.connect();
     
     SceneManager.init(app);
-    SceneManager.changeScene(new TitleScene(app));
-    //SceneManager.changeScene(new GameScene(app));
+    //SceneManager.changeScene(new TitleScene(app));
+    SceneManager.changeScene(new GameScene(app));
 })()

@@ -1,9 +1,15 @@
 import http from "http";
+import express from "express";
 import { WebSocketServer } from "ws";
-import { handleConnection } from "./match";
+import { handleConnection } from "./playerConnection";
 
-const server = http.createServer();
+const app = express();
+const server = http.createServer(app);
 const wss = new WebSocketServer({ server });
+
+app.get("/", (req, res) => {
+  res.send("Matchmaking server is running");
+});
 
 wss.on("connection", handleConnection);
 
