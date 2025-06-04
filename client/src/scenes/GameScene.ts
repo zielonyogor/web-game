@@ -18,7 +18,6 @@ export class GameScene extends PIXI.Container {
 
     constructor(app: PIXI.Application) {
         super();
-		NetworkManager.send("Hello!!!");
 
 		this.playerSpawnPoint = new PIXI.Point(0,0);
         this.player = new Player(this.playerSpawnPoint); 
@@ -73,8 +72,8 @@ export class GameScene extends PIXI.Container {
 	}
 
 	private addOtherPlayer() {
-		const otherPlayer = new GameObject({ width: 60, height: 60, color: 0x888888, x: 0, y: 0 });
-		otherPlayer.addOnUpdate((number) => {
+		const otherPlayer = new GameObject({ width: 60, height: 60, color: 0x888888, x: 0, y: 0, isTrigger: true });
+		otherPlayer.addOnUpdate((deltaTime) => {
 			
 		});
 

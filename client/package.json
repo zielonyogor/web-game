@@ -10,7 +10,8 @@
   },
   "devDependencies": {
     "typescript": "~5.8.3",
-    "vite": "^6.3.5"
+    "vite": "^6.3.5",
+    "vite-tsconfig-paths": "^5.1.4"
   },
   "dependencies": {
     "@pixi/devtools": "^2.0.1",

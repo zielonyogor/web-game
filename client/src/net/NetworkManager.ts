@@ -1,3 +1,4 @@
+import {MessageType, type Message} from "@shared/Message";
 export class NetworkManager {
     private static socket: WebSocket;
 
@@ -9,9 +10,9 @@ export class NetworkManager {
         }
     }
 
-    public static send(data: any) {
+    public static send(message: Message) {
         if(this.socket?.readyState === WebSocket.OPEN) {
-            this.socket.send(JSON.stringify(data));
+            this.socket.send(JSON.stringify(message));
         }
     }
 }

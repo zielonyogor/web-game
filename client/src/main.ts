@@ -23,6 +23,6 @@ const app = new PIXI.Application();
     NetworkManager.connect();
     
     SceneManager.init(app);
-    //SceneManager.changeScene(new TitleScene(app));
-    SceneManager.changeScene(new GameScene(app));
+    SceneManager.changeScene(new TitleScene(app));
+    //SceneManager.changeScene(new GameScene(app));
 })()
