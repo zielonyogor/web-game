@@ -1,28 +1,32 @@
-import * as PIXI from 'pixi.js';
-import { SceneManager } from './core/SceneManager';
-import { TitleScene } from './scenes/TitleScene';
-import { GameStyle } from './core/GameStyle';
-import "./style.css";
-import { NetworkManager } from './net/NetworkManager';
-import { GameScene } from './scenes/GameScene';
+function setupButtons() {
+  const joinBtn = document.getElementById("join-btn");
+  const hostBtn = document.getElementById("host-btn");
 
-const app = new PIXI.Application();
+  if (!(joinBtn instanceof HTMLButtonElement) || !(hostBtn instanceof HTMLButtonElement)) {
+    console.error("Buttons not found or not valid button elements.");
+    return;
+  }
 
+  joinBtn.addEventListener("click", () => {
+    console.log("Join button clicked");
+    // Handle join logic
+  });
 
-(window as any).__PIXI_APP__ = app;
+  hostBtn.addEventListener("click", async () => {
+    const nickname = (document.getElementById("nickname") as HTMLInputElement).value.trim();
+    console.log(nickname);
 
-(async () => {
-    await app.init({
-      background: 0x1099bb, 
-      width: GameStyle.screenDimension.x, 
-      height: GameStyle.screenDimension.y
+    const res = await fetch(`/api/create-game?nickname=${encodeURIComponent(nickname)}`, {
+        method: 'GET',
+        credentials: 'include'
     });
+    console.log(res);
 
-    document.body.appendChild(app.canvas);
+    if (res.redirected) {
+        console.log(res.url);
+        window.location.href = res.url; // redirect
+    }
+  });
+}
 
-    NetworkManager.connect();
-    
-    SceneManager.init(app);
-    SceneManager.changeScene(new TitleScene(app));
-    //SceneManager.changeScene(new GameScene(app));
-})()
+document.addEventListener('DOMContentLoaded', setupButtons);

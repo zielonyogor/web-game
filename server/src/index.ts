@@ -2,6 +2,8 @@ import http from "http";
 import express from "express";
 import { WebSocketServer } from "ws";
 import { handleConnection } from "./playerConnection";
+import routing from "./routing";
+import cors from "cors";
 
 const app = express();
 const server = http.createServer(app);
@@ -10,6 +12,13 @@ const wss = new WebSocketServer({ server });
 app.get("/", (req, res) => {
   res.send("Matchmaking server is running");
 });
+
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true
+}));
+
+app.use('/', routing);
 
 wss.on("connection", handleConnection);
 
