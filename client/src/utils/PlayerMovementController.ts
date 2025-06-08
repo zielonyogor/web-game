@@ -4,7 +4,7 @@ import { GameStyle } from "../core/GameStyle";
 import { Player } from "../components/game/Player";
 import { ColliderManager } from "../core/ColliderManager";
 import { NetworkManager } from "../net/NetworkManager";
-import { MessageType } from "@shared/Message";
+import * as Network from "@shared/Message";
 
 
 export class PlayerMovementController{
@@ -81,11 +81,10 @@ export class PlayerMovementController{
             this.player.y = newY;
 	        ColliderManager.checkTriggers(this.player.collider);
             NetworkManager.send({
-                type: MessageType.MoveGameObject,
+                type: Network.MessageType.PlayerPositionUpdate,
                 payload: {
-                    id: 0,
-                    x: 10,
-                    y: 10
+                    x: this.player.x,
+                    y: this.player.y,
                 }
             });
         }

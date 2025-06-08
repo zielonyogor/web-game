@@ -2,42 +2,49 @@ import * as PIXI from "pixi.js";
 import { Player } from "../components/game/Player";
 import { MainGameUI } from "../components/ui/MainGameUI";
 import { PlayerMovementController } from "../utils/PlayerMovementController";
-import { Collider } from "../components/Collider";
-import { ColliderManager } from "../core/ColliderManager";
-import { NetworkManager } from "../net/NetworkManager";
 import { GameObject } from "../components/game/GameObject";
 import { Obstacle } from "../components/game/Obstacle";
+import { NetworkManager } from "../net/NetworkManager";
+import type { MapLayout } from "@shared/maps/Map";
+import { Scene } from "./Scene";
 
-export class GameScene extends PIXI.Container {
-    private player : Player;
-	private playerSpawnPoint: PIXI.Point;
-	private playerMovement: PlayerMovementController;
+export class GameScene extends Scene {
+    private player!: Player;
+	private playerSpawnpoint!: PIXI.Point;
+	private playerMovement!: PlayerMovementController;
 	public mainGameUI : MainGameUI;
 
-	private allObjects: Array<GameObject>;
-
     constructor(app: PIXI.Application) {
-        super();
-
-		this.playerSpawnPoint = new PIXI.Point(0,0);
-        this.player = new Player(this.playerSpawnPoint); 
-        this.addChild(this.player);
-		this.playerMovement = new PlayerMovementController(this.player);
+        super(app);
 
 		this.mainGameUI = new MainGameUI();
 		this.addChild(this.mainGameUI);
 
+		const mapJSON = sessionStorage.getItem('loadedMap');
+		if (!mapJSON) {
+			console.error("No map loaded from sessionStorage");
+			return;
+		}
+		const map: MapLayout = JSON.parse(mapJSON);
+
+		this.playerSpawnpoint = new PIXI.Point(
+			map.spawnpoint.x,
+			map.spawnpoint.y,
+		);
+        this.player = new Player(this.playerSpawnpoint); 
+        this.addChild(this.player);
+		this.playerMovement = new PlayerMovementController(this.player);
+
+
 		this.allObjects = [];
 
-		this.addWalls();
-		this.addTeleporter();
-		this.addObstacles();
+		this.addObjects(map);
+		this.addFinish(map);
 		this.addOtherPlayer();
-
-		app.ticker.add(delta => this.update(delta.deltaTime));
     }
 
-	private update(deltaTime: number) {
+	protected update(deltaTime: number) {
+		super.update(deltaTime);
 		this.playerMovement.update(deltaTime);
 
 		this.allObjects.forEach(obj => {
@@ -45,38 +52,51 @@ export class GameScene extends PIXI.Container {
 		});
 	}
 
-	private addWalls() {
-		const wall = new GameObject({ width: 60, height: 60, color: 0x888888, x: 300, y: 200 });
-		this.addChild(wall);
-		this.allObjects.push(wall);
+	private addObjects(map: MapLayout) {
+		console.log(map);
+		if(map.objects.length === 0) return;
+
+		for (const obj of map.objects) {
+			const wall = new GameObject({
+				id: obj.type,
+				width: 40,
+				height: 40,
+				color: 0x888888,
+				x: obj.position.x,
+				y: obj.position.y
+			});
+			this.addChild(wall);
+			this.allObjects.push(wall);
+		}
 	}
-	
-	private addTeleporter() {
-		const tp = new GameObject({ width: 60, height: 60, color: 0x00ffff, x: 500, y: 300, isTrigger: true });
-		tp.collider.addOnTrigger(() => {
-			this.player.x = 100;
-			this.player.y = 100;
-			console.log("teleported!");
+
+	private addFinish(map: MapLayout) {
+		const finish = new GameObject({
+			id: "finishpoint",
+			width: 60,
+			height: 60,
+			color: 0x00ff00,
+			x: map.finishpoint.x,
+			y: map.finishpoint.y,
+			isTrigger: true,
 		});
-		this.addChild(tp);
-		this.allObjects.push(tp);
-	}
-	
-	private addObstacles() {
-		const ob1 = new Obstacle({points: [new PIXI.Point(550, 0), new PIXI.Point(550, 100)], width: 60, height: 60, color: 0x00ffff, x: 550, y: 10});
-		ob1.collider.addOnTrigger(() => {
-			this.player.position = this.playerSpawnPoint;
+		finish.collider.addOnTrigger(() => {
+			console.log("You win!");
 		});
-		this.addChild(ob1);
-		this.allObjects.push(ob1);
+		this.addChild(finish);
+		this.allObjects.push(finish);
 	}
 
 	private addOtherPlayer() {
-		const otherPlayer = new GameObject({ width: 60, height: 60, color: 0x888888, x: 0, y: 0, isTrigger: true });
-		otherPlayer.addOnUpdate((deltaTime) => {
-			
+		const otherPlayer = new GameObject({ 
+			id: "otherplayer",
+			width: 60, 
+			height: 60, 
+			color: 0x888888, 
+			x: 0, 
+			y: 0, 
+			isTrigger: true 
 		});
-
 		this.addChild(otherPlayer);
 		this.allObjects.push(otherPlayer);
 	}

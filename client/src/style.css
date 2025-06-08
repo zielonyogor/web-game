@@ -2,3 +2,7 @@
     font-family: 'PixelFont';
     src: url('/assets/CutePixel.ttf') format('truetype');
 }
+
+.hidden {
+    display: none;
+}

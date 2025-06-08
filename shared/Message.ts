@@ -1,26 +1,31 @@
+import { MapLayout } from "./maps/Map";
+
 export enum MessageType {
-    MoveGameObject = "MoveGameObject",
+    MoveGameObjects = "MoveGameObjects",
     PlayerWon = "PlayerWon",
     TimeUpdate = "TimeUpdate",
+    LoadScene = "LoadScene",
     GameStart = "GameStart",
     GameEnd = "GameEnd",
-    PlayerJoin = "PlayerJoin",
-    PlayerLeft = "PlayerLeft"
+    PlayerLeft = "PlayerLeft",
+    PlayerLoaded = "PlayerLoaded",
+    PlayerReady = "PlayerReady",
+    PlayerPositionUpdate = "PlayerPositionUpdate",
 }
 
-interface MoveGameObjectMessage {
-    type: MessageType.MoveGameObject;
+interface MoveGameObjectsMessage {
+    type: MessageType.MoveGameObjects;
     payload: {
-        id: number;
+        id: string;
         x: number;
         y: number;
-    };
+    }[];
 }
 
 interface PlayerWonMessage {
     type: MessageType.PlayerWon;
     payload: {
-        playerId: number;
+        playerId: string;
     };
 }
 
@@ -43,31 +48,44 @@ interface GameEndMessage {
     };
 }
 
-interface PlayerJoinMessage {
-    type: MessageType.PlayerJoin;
-    payload: {
-        playerId: number;
-        name: string;
-    };
-}
-
 interface PlayerLeftMessage {
     type: MessageType.PlayerLeft;
     payload: {
-        playerId: number;
+        playerId: string;
+    };
+}
+
+interface PlayerReadyMessage {
+    type: MessageType.PlayerLoaded;
+    payload: {
+        code: string,
+        playerId: string,
+    };
+}
+
+interface LoadSceneMessage {
+    type: MessageType.LoadScene;
+    payload: {
+        url: string,
+        map: MapLayout,
+    };
+}
+
+interface PlayerPositionUpdateMessage {
+    type: MessageType.PlayerPositionUpdate;
+    payload: {
+        x: number;
+        y: number;
     };
 }
 
 export type Message =
-    | MoveGameObjectMessage
+    | MoveGameObjectsMessage
     | PlayerWonMessage
     | TimeUpdateMessage
     | GameStartMessage
     | GameEndMessage
-    | PlayerJoinMessage
-    | PlayerLeftMessage;
-
-// export interface MessagePacket {
-//     type: MessageType;
-//     payload: any;
-// }
+    | PlayerLeftMessage
+    | PlayerReadyMessage
+    | LoadSceneMessage
+    | PlayerPositionUpdateMessage;

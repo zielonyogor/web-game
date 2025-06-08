@@ -1,7 +1,7 @@
 import http from "http";
 import express from "express";
 import { WebSocketServer } from "ws";
-import { handleConnection } from "./playerConnection";
+import { NetworkManager } from "./NetworkManager";
 import routing from "./routing";
 import cors from "cors";
 
@@ -20,7 +20,7 @@ app.use(cors({
 
 app.use('/', routing);
 
-wss.on("connection", handleConnection);
+wss.on("connection", NetworkManager.handleConnection);
 
 server.listen(3000, () => {
   console.log("Server running on http://localhost:3000");

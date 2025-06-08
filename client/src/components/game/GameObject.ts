@@ -3,6 +3,7 @@ import { Collider } from "../Collider";
 import { ColliderManager } from "../../core/ColliderManager";
 
 export interface GameObjectProps {
+    id: string,
     width: number;
     height: number;
     color?: number;
@@ -14,11 +15,13 @@ export interface GameObjectProps {
 }
 
 export class GameObject extends PIXI.Container {
+    public id: string;
     public collider: Collider;
     protected sprite: PIXI.Graphics;
     private onUpdate?: (deltaTime: number) => void;
 
     constructor({
+        id,
         width,
         height,
         color = 0xffffff, // change to sprite later
@@ -29,6 +32,8 @@ export class GameObject extends PIXI.Container {
         colliderHeight,
     }: GameObjectProps) {
         super();
+
+        this.id = id;
 
         // Centered drawing (around 0,0)
         this.sprite = new PIXI.Graphics()

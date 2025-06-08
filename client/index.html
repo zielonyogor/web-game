@@ -10,9 +10,16 @@
   <body>
     <div id="app">
       <h1 class="title">Web Game</h1>
-      <input type="text" class="nickname" id="nickname" placeholder="Enter your nickname">
+      <label for="nickname">Nickname</label>
+      <input type="text" class="nickname" id="nickname" name="nickname" placeholder="Enter your nickname" autocomplete="off">
       <button class="btn" id="join-btn">Join game</button>
       <button class="btn" id="host-btn">Host game</button>
+    </div>
+
+    <div id="code-modal" class="modal hidden">
+      <label for="code"></label>
+      <input type="text" name="code" id="code" placeholder="Enter game code" autocomplete="off">
+      <button type="submit" id="join-game-btn">Join</button>
     </div>
 
     <script type="module" src="src/main.ts"></script>

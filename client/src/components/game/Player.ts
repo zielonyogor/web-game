@@ -5,6 +5,7 @@ export class Player extends GameObject {
 
     constructor(point: PIXI.Point) {
         super({
+            id: "player",
             width: 60, 
             height: 60, 
             color: 0xffffff, 

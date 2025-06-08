@@ -1,23 +1,55 @@
 import { Router } from "express";
+import * as GM from "../gameManager";
 
 const router = Router();
 
 router.get("/api/create-game", (req, res) => {
-  const name = req.query.nickname as string;
-  console.log(name);
+  const nickname = req.query.nickname as string;
+  console.log(nickname);
 
-  if(!name) {
+  if(!nickname) {
     res.status(400).send("Nickname required");
+    return;
   }
 
-  const gameCode = generateGameCode();
+  const code = generateGameCode();
+  GM.createGameSession(code);
 
-  res.cookie("nickname", name, {
+  res.cookie("nickname", nickname, {
+    httpOnly: false, //frontend
+  })
+  res.cookie("code", code, {
     httpOnly: false, //frontend
   })
 
-  console.log(`/lobby?code=${gameCode}`);
-  res.redirect(`/lobby?code=${gameCode}`);
+  res.redirect(`/lobby?code=${code}`);
+});
+
+router.get("/api/join-game", (req, res) => {
+  const code = req.query.code as string;
+  const nickname = req.query.nickname as string;
+  console.log(code);
+
+  if(!nickname) {
+    res.status(400).send("Nickname required");
+    return;
+  }
+  if(!GM.gameExists(code)) {
+    res.status(400).send("No such game exists");
+    return;
+  }
+
+  res.cookie("nickname", nickname, {
+    httpOnly: false, //frontend
+  })
+  res.cookie("code", code, {
+    httpOnly: false, //frontend
+  })
+
+
+  //GM.addPlayer(code, nickname);
+
+  res.redirect(`/lobby?code=${code}`);
 });
 
 function generateGameCode(): string {
