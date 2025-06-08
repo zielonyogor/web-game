@@ -7,31 +7,30 @@ import { NetworkManager } from './net/NetworkManager';
 import { MessageType } from '@shared/Message';
 import getCookie from '@shared/cookie';
 
-const app = new PIXI.Application();
 
+await document.fonts.ready;
 
-(window as any).__PIXI_APP__ = app;
-
-(async () => {
-  await document.fonts.ready;
-
+export async function initGame() {
+  const app = new PIXI.Application();
+  (window as any).__PIXI_APP__ = app;
+  
   await app.init({
     background: 0x1099bb, 
     width: GameStyle.screenDimension.x, 
     height: GameStyle.screenDimension.y
   });
 
-  document.body.appendChild(app.canvas);
+  const appDiv = document.getElementById("app");
+  if(!appDiv) return;
+
+  appDiv.innerHTML = "";
+  appDiv.appendChild(app.canvas);
   
   SceneManager.init(app);
   SceneManager.changeScene(new GameScene(app));
 
   const nickname = getCookie("nickname");
   const code = getCookie("code");
-  // if(code === null) {
-  //   document.location.href = '/';
-  //   return;
-  // }
 
   NetworkManager.send({
     type: MessageType.PlayerLoaded,
@@ -41,4 +40,4 @@ const app = new PIXI.Application();
     }
   });
   
-})();
+}

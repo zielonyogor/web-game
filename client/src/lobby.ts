@@ -1,12 +1,16 @@
+import getCookie from "@shared/cookie";
 import { NetworkManager } from "./net/NetworkManager";
 
-NetworkManager.connect();
+export function initLobby() {
+    console.log("skisisi");
+    NetworkManager.connect();
 
-document.addEventListener('DOMContentLoaded', () => {
-    const codeSpan = document.getElementById("code") as HTMLElement;
+    document.getElementById("main-container")?.classList.add("hidden");
+    document.getElementById("code-container")?.classList.remove("hidden");
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get("code");
+    const codeSpan = document.getElementById("code-span") as HTMLElement;
+
+    const code = getCookie("code");
     if(code === null) {
         console.error("Could not find code");
         return;
@@ -18,4 +22,4 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("copied");
         navigator.clipboard.writeText(code);
     })
-})
+}

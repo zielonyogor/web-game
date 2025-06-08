@@ -1,4 +1,7 @@
+import { initLobby } from "./lobby";
+
 function setup() {
+  console.log("TEST DEBUG LOG");
   const joinBtn = document.getElementById("join-btn") as HTMLButtonElement;
   const hostBtn = document.getElementById("host-btn") as HTMLButtonElement;
 
@@ -22,16 +25,15 @@ function setup() {
       console.log(res);
 
       if(res.status == 400) return;
-
-      if (res.redirected) {
-          console.log(res.url);
-          window.location.href = res.url; // redirect
+      if (res.status == 200) {
+        initLobby();
       }
     });
   });
 
   hostBtn.addEventListener("click", async () => {
     const nickname = nicknameInput.value.trim();
+    console.log(`nickname: ${nickname}`);
 
     const res = await fetch(`/api/create-game?nickname=${encodeURIComponent(nickname)}`, {
         method: 'GET',
@@ -40,12 +42,17 @@ function setup() {
     console.log(res);
 
     if(res.status == 400) return;
-
-    if (res.redirected) {
-        console.log(res.url);
-        window.location.href = res.url; // redirect
+    if (res.status == 200) {
+        console.log('lobby');
+        initLobby();
     }
   });
 }
 
-document.addEventListener('DOMContentLoaded', setup);
+if (document.readyState !== 'loading') {
+    setup();
+} else {
+    document.addEventListener('DOMContentLoaded', function () {
+        setup();
+    });
+}

@@ -1,6 +1,7 @@
 import getCookie from "@shared/cookie";
 import * as Network from "@shared/Message";
 import { SceneManager } from "../core/SceneManager";
+import { initGame } from "../game";
 
 export class NetworkManager {
     private static socket: WebSocket;
@@ -44,8 +45,7 @@ export class NetworkManager {
 
         if(data.type == Network.MessageType.LoadScene) {
             sessionStorage.setItem('loadedMap', JSON.stringify(data.payload.map));
-            window.location.href = data.payload.url;
-            console.log(data.payload.map);
+            initGame();
         }
         else if(data.type == Network.MessageType.TimeUpdate) {
 
