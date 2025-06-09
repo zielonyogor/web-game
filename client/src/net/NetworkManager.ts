@@ -56,6 +56,7 @@ export class NetworkManager {
             }
             otherPlayer.x = data.payload.x;
             otherPlayer.y = data.payload.y;
+            otherPlayer.angle = data.payload.angle;
         }
     }
 }

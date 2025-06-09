@@ -74,8 +74,9 @@ interface LoadSceneMessage {
 interface PlayerPositionUpdateMessage {
     type: MessageType.PlayerPositionUpdate;
     payload: {
-        x: number;
-        y: number;
+        angle: number,
+        x: number,
+        y: number,
     };
 }
 

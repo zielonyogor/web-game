@@ -16,7 +16,7 @@ export class NetworkManager {
                 GM.addPlayer(data.payload.code, data.payload.playerId, socket);
             }
             else if(data.type == Network.MessageType.PlayerPositionUpdate) {
-                GM.updatePlayer(socket, data.payload.x, data.payload.y);
+                GM.updatePlayer(socket, data.payload.angle, data.payload.x, data.payload.y);
             }
         }
     }

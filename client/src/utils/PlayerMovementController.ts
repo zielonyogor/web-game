@@ -81,7 +81,8 @@ export class PlayerMovementController{
         const blocked = ColliderManager.willCollide(this.player.collider, newX, newY);
 
         if (!blocked && withinBoundsX && withinBoundsY) {
-            this.player.rotation = Math.atan2(newY - this.player.y, newX - this.player.x);
+            const rotation = Math.atan2(newY - this.player.y, newX - this.player.x);
+            this.player.rotation = rotation;
             this.player.x = newX;
             this.player.y = newY;
 	        ColliderManager.checkTriggers(this.player.collider);
@@ -91,6 +92,7 @@ export class PlayerMovementController{
                 NetworkManager.send({
                     type: Network.MessageType.PlayerPositionUpdate,
                     payload: {
+                        angle: rotation,
                         x: this.player.x,
                         y: this.player.y,
                     }

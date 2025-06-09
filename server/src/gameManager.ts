@@ -98,7 +98,7 @@ export function addPlayer(code: string, player: string, socket: WebSocket) {
     }
 }
 
-export function updatePlayer(socket: WebSocket, x: number, y: number) {
+export function updatePlayer(socket: WebSocket, angle: number, x: number, y: number) {
     console.log("updating");
     const game = getGame(socket);
     if(game == undefined) {
@@ -111,6 +111,7 @@ export function updatePlayer(socket: WebSocket, x: number, y: number) {
         NetworkManager.send(otherPlayer.socket, {
             type: MessageType.PlayerPositionUpdate,
             payload: {
+                angle: angle,
                 x: x,
                 y: y,
             }
