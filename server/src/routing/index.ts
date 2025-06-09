@@ -8,7 +8,7 @@ router.get("/api/create-game", (req, res) => {
   console.log(nickname);
 
   if(!nickname) {
-    res.status(400).send("Nickname required");
+    res.status(400).send({error: "Nickname required"});
     return;
   }
 
@@ -33,8 +33,16 @@ router.get("/api/join-game", (req, res) => {
     res.status(400).send({error: "Nickname required"});
     return;
   }
-  if(!GM.gameExists(code)) {
-    res.status(400).send({error: "No such game exists"});
+  
+  const game = GM.getGame(code);
+  if (!game) {
+    res.status(400).send({ error: "No such game exists" });
+    return;
+  }
+
+  const nameTaken = game.players.some(player => player.nickname === nickname);
+  if (nameTaken) {
+    res.status(400).send({ error: "A player in this match already has this nickname" });
     return;
   }
   

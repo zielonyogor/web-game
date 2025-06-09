@@ -66,7 +66,6 @@ interface PlayerReadyMessage {
 interface LoadSceneMessage {
     type: MessageType.LoadScene;
     payload: {
-        url: string,
         map: MapLayout,
     };
 }

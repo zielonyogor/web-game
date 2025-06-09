@@ -1,14 +1,14 @@
 import { MapLayout } from "./Map";
 
-export const map1 = {
-    id: "map1",
+export const map2 = {
+    id: "map2",
     spawnpoint: {
-        x: 50,
-        y: 100,
+        x: 30,
+        y: 200,
     },
     finishpoint: {
-        x: 700,
-        y: 500,
+        x: 780,
+        y: 100,
     },
     objects:[
         {

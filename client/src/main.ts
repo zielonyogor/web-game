@@ -15,15 +15,21 @@ function setup() {
   }
 
   joinBtn.addEventListener("click", () => {
+    const nickname = nicknameInput.value.trim();
+    if (!nickname) {
+      alert("Please enter a nickname.");
+      return;
+    }
+    
     const codeModal = document.getElementById("code-modal") as HTMLElement;
     codeModal.classList.remove("hidden");
-
+    
     const codeInput = document.getElementById("code") as HTMLInputElement;
-    const joinBtn = document.getElementById("join-game-btn") as HTMLButtonElement;
-
-    joinBtn.addEventListener("click", async () => {
-      const code = codeInput.value.trim();
+    const joinGameBtn = document.getElementById("join-game-btn") as HTMLButtonElement;
+    
+    joinGameBtn.addEventListener("click", async () => {
       const nickname = nicknameInput.value.trim();
+      const code = codeInput.value.trim();
 
       const res = await fetch(`/api/join-game?code=${encodeURIComponent(code)}&nickname=${encodeURIComponent(nickname)}`, {
           method: 'GET',
@@ -46,15 +52,23 @@ function setup() {
     nickname = nicknameInput.value.trim();
     console.log(`nickname: ${nickname}`);
 
+    if (!nickname) {
+      alert("Please enter a nickname.");
+      return;
+    }
+
     const res = await fetch(`/api/create-game?nickname=${encodeURIComponent(nickname)}`, {
         method: 'GET',
         credentials: 'include'
     });
     console.log(res);
 
-    if(res.status == 400) return;
+    if(res.status == 400) {
+      const message = await res.json();
+      alert(message.error); // change to something prettier
+      return;
+    }
     if (res.status == 200) {
-        console.log('lobby');
         initLobby();
     }
   });
