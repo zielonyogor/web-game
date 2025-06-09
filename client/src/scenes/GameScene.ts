@@ -50,9 +50,9 @@ export class GameScene extends Scene {
 		super.update(deltaTime);
 		this.playerMovement?.update(deltaTime);
 
-		this.allObjects.forEach(obj => {
-			obj.update(deltaTime);
-		});
+		// this.allObjects.forEach(obj => {
+		// 	obj.update(deltaTime);
+		// });
 	}
 
 	private addObjects(map: MapLayout) {
@@ -60,21 +60,36 @@ export class GameScene extends Scene {
 		if(map.objects.length === 0) return;
 
 		for (const obj of map.objects) {
-			const wall = new GameObject({
-				id: obj.type,
-				sprite: 'wall',
-				x: obj.position.x,
-				y: obj.position.y
-			});
-			this.addChild(wall);
-			this.allObjects.push(wall);
+			if(obj.type == 'wall') {
+				const wall = new GameObject({
+					id: obj.type,
+					sprite: 'wall',
+					x: obj.position.x,
+					y: obj.position.y
+				});
+				this.addChild(wall);
+				this.allObjects.push(wall);
+			}
+			else {
+				const obstacle = new Obstacle({
+					id: obj.type,
+					sprite: 'obstacle',
+					x: obj.position.x,
+					y: obj.position.y
+				});
+				obstacle.collider.addOnTrigger((_) => {
+					this.player.position = this.playerSpawnpoint;
+				})
+				this.addChild(obstacle);
+				this.allObjects.push(obstacle);
+			}
 		}
 	}
 
 	private addFinish(map: MapLayout) {
 		const finish = new GameObject({
-			id: "finishpoint",
-			sprite: 'wall',
+			id: "finish_point",
+			sprite: 'finish_point',
 			x: map.finishpoint.x,
 			y: map.finishpoint.y,
 			isTrigger: true,
@@ -96,8 +111,8 @@ export class GameScene extends Scene {
 		const otherPlayer = new GameObject({ 
 			id: "otherplayer",
 			sprite: 'player',
-			x: 0, 
-			y: 0, 
+			x: this.playerSpawnpoint.x, 
+			y: this.playerSpawnpoint.y, 
 			isTrigger: true 
 		});
 		this.addChild(otherPlayer);
@@ -112,7 +127,7 @@ export class GameScene extends Scene {
 			}
 			otherPlayer.x = data.payload.x;
 			otherPlayer.y = data.payload.y;
-			otherPlayer.angle = data.payload.angle;
+			otherPlayer.rotation = data.payload.angle;
 		}
 		else if(data.type == Network.MessageType.PlayerReady) {
 			this.playerMovement = new PlayerMovementController(this.player);
@@ -131,6 +146,9 @@ export class GameScene extends Scene {
 				this.mainGameUI.showLost();
 				this.playerMovement?.disableInput();
 			}
+		}
+		else if(data.type === Network.MessageType.PlayerDisconnect) {
+			this.mainGameUI.showPlayerDisconnected(data.payload.id);
 		}
 	}
 }

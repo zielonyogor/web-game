@@ -6,11 +6,9 @@ export enum GameState{
     MatchInProgress = "MatchInProgress",
 }
 
-export enum PlayerState{ // is this useful???
+export enum PlayerState{
     Init = "Init",
     Ready = "Ready",
-    Won = "Won",
-    InGame = "InGame",
 }
 
 export type Player = {
@@ -24,5 +22,6 @@ export type GameSession = {
     players: Player[];
     state: GameState,
     currentMap?: MapLayout,
-    matchTimer?: NodeJS.Timeout, 
+    interval?: NodeJS.Timeout, 
+    time?: number,
 };

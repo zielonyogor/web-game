@@ -15,7 +15,7 @@ export class NetworkManager {
             const nickname = getCookie("nickname");
             const code = getCookie("code");
             if(code === null) {
-                document.location.href = '/';
+                window.location.reload();
                 return;
             }
             
@@ -49,6 +49,5 @@ export class NetworkManager {
         else {
             SceneManager.getCurrentScene().manageData(data);
         }
-
     }
 }

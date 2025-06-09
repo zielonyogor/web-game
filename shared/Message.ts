@@ -7,10 +7,11 @@ export enum MessageType {
     LoadScene = "LoadScene",
     GameStart = "GameStart",
     GameEnd = "GameEnd",
-    PlayerLeft = "PlayerLeft",
+    PlayerDisconnect = "PlayerDisconnect",
     PlayerLoaded = "PlayerLoaded",
     PlayerReady = "PlayerReady",
     PlayerPositionUpdate = "PlayerPositionUpdate",
+    Heartbeat = "Heartbeat",
 }
 
 interface MoveGameObjectsMessage {
@@ -41,17 +42,10 @@ interface GameStartMessage {
     payload: {};
 }
 
-interface GameEndMessage {
-    type: MessageType.GameEnd;
-    payload: {
-        winnerId: number;
-    };
-}
-
 interface PlayerLeftMessage {
-    type: MessageType.PlayerLeft;
+    type: MessageType.PlayerDisconnect;
     payload: {
-        playerId: string;
+        id: string;
     };
 }
 
@@ -86,12 +80,12 @@ interface PlayerPositionUpdateMessage {
     };
 }
 
+
 export type Message =
     | MoveGameObjectsMessage
     | PlayerWonMessage
     | TimeUpdateMessage
     | GameStartMessage
-    | GameEndMessage
     | PlayerLeftMessage
     | PlayerLoadedMessage
     | LoadSceneMessage

@@ -31,7 +31,11 @@ function setup() {
       });
       console.log(res);
 
-      if(res.status == 400) return;
+      if(res.status == 400) {
+        const message = await res.json();
+        alert(message.error); // change to something prettier
+        return;
+      }
       if (res.status == 200) {
         initLobby();
       }

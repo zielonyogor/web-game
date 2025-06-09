@@ -36,7 +36,7 @@ export async function initGame() {
 
 async function preload() {
   const assets = [
-      { alias: 'background', src: '/public/assets/images/background.png' },
+      { alias: 'background', src: '/assets/images/background.png' },
       { alias: 'player', src: '/assets/images/player.png' },
       { alias: 'wall', src: '/assets/images/wall_tile.png' },
       { alias: 'obstacle', src: '/assets/images/obstacle.png' },

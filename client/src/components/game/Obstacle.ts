@@ -3,7 +3,7 @@ import { GameObject, type GameObjectProps } from "./GameObject";
 
 interface ObstacleProps extends Omit<GameObjectProps, 'isTrigger'> {
     speed?: number;
-    points: PIXI.Point[];
+    points?: PIXI.Point[];
 }
 
 export class Obstacle extends GameObject {
@@ -18,7 +18,7 @@ export class Obstacle extends GameObject {
         });
         this.speed = speed;
 
-        this.points = points;
+        this.points = points ?? [];
         this.currentPoint = 0;
 
         this.addOnUpdate(this.moveAlongNamepoints);

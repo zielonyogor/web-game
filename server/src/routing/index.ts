@@ -28,14 +28,13 @@ router.get("/api/create-game", (req, res) => {
 router.get("/api/join-game", (req, res) => {
   const code = req.query.code as string;
   const nickname = req.query.nickname as string;
-  console.log(code);
   
   if(!nickname) {
-    res.status(400).send("Nickname required");
+    res.status(400).send({error: "Nickname required"});
     return;
   }
   if(!GM.gameExists(code)) {
-    res.status(400).send("No such game exists");
+    res.status(400).send({error: "No such game exists"});
     return;
   }
   
@@ -46,7 +45,6 @@ router.get("/api/join-game", (req, res) => {
     httpOnly: false, //frontend
   })
   
-  //GM.addPlayer(code, nickname);
   res.status(200).send(`Created game ${code}`);
 });
 

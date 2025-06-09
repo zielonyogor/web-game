@@ -4,14 +4,13 @@ import type { WebSocket } from 'ws';
 import { maps } from "@shared/maps";
 import { GameSession, GameState, Player, PlayerState } from "./types/GameTypes";
 
-const minPlayers = 1; // depends on debugging
+const minPlayers = 2; // depends on debugging
 const gameSessions = new Map<string, GameSession>();
 
 export function createGameSession(code: string): GameSession {
     const game: GameSession = {
         code,
         players: [],
-        //players: [{nickname: player, state: PlayerState.Init}],
         state: GameState.MatchMaking,
     };
 
@@ -105,22 +104,22 @@ export function readyPlayer(socket: WebSocket) {
 }
 
 function countdown(game: GameSession) {
-    let countdown = 2;
-
-    const preMatchInterval = setInterval(() => {
+    game.time = 2;
+    game.interval = setInterval(() => {
+        if(game.time == undefined) return;
 
         game.players.forEach(p => {
             NetworkManager.send(p.socket, {
                 type: MessageType.TimeUpdate,
                 payload: {
-                    time: countdown,
+                    time: game.time,
                 },
             });
         });
-        countdown--;
+        game.time--;
 
-        if (countdown < 0) {
-            clearInterval(preMatchInterval);
+        if (game.time < 0) {
+            clearInterval(game.interval);
             game.players.forEach(p => {
                 NetworkManager.send(p.socket, {
                     type: MessageType.PlayerReady,
@@ -135,7 +134,7 @@ function countdown(game: GameSession) {
 function update(game: GameSession) {
     const startTime = Date.now();
 
-    game.matchTimer = setInterval(() => {
+    game.interval = setInterval(() => {
         const now = Date.now();
         const elapsed = (now - (startTime ?? now)) / 1000;
 
@@ -152,13 +151,13 @@ function update(game: GameSession) {
 }
 
 export function playerWin(socket: WebSocket) {
-     const game = getGame(socket);
+    const game = getGame(socket);
     if(game === undefined) return;
 
     const player = game.players.find(p => p.socket === socket);
     if(player === undefined) return;
 
-    clearInterval(game.matchTimer);
+    clearInterval(game.interval);
     game.players.forEach(p => {
         NetworkManager.send(p.socket, {
             type: MessageType.PlayerWon,
@@ -167,4 +166,43 @@ export function playerWin(socket: WebSocket) {
             },
         });
     });
+}
+
+export function disconnectPlayer(socket: WebSocket) {
+    const game = getGame(socket);
+    if(game === undefined) return;
+
+    const disconnectedPlayerIndex = game.players.findIndex(p => p.socket === socket);
+    if (disconnectedPlayerIndex === -1) return;
+    const [disconnectedPlayer] = game.players.splice(disconnectedPlayerIndex, 1);
+    console.log(`Player ${disconnectedPlayer.nickname} disconnected from game ${game.code}`);
+
+    const remainingPlayer = game.players[0];
+
+    if (remainingPlayer) {
+        if (remainingPlayer.state === PlayerState.Ready) {
+            if (game.interval) {
+                clearInterval(game.interval);
+                delete game.interval;
+            }
+
+            NetworkManager.send(remainingPlayer.socket, {
+                type: MessageType.PlayerDisconnect,
+                payload: {
+                    id: disconnectedPlayer.nickname
+                }
+            });
+
+            gameSessions.delete(game.code);
+            console.log(`Game ${game.code} ended due to disconnect`);
+        }
+    } 
+    else {
+        if (game.interval) {
+            clearInterval(game.interval);
+            delete game.interval;
+        }
+        gameSessions.delete(game.code);
+        console.log(`Game session ${game.code} deleted — no players remaining`);
+    }
 }

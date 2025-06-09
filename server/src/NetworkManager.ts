@@ -8,6 +8,10 @@ export class NetworkManager {
             console.log("[alert] Conenction");
         }
 
+        socket.onclose = function (_) {
+            GM.disconnectPlayer(socket);
+        }
+
         socket.onmessage = function (event) {
             console.log(`[message] Data received from client: ${event.data}`);
             const data = JSON.parse(event.data.toString()) as Network.Message;
