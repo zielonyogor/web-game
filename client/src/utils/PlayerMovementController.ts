@@ -23,6 +23,9 @@ export class PlayerMovementController{
     private speed: number = 3;
     private drag: number = 0.1;
 
+    private sendInterval = 50; //ms
+    private lastSentTime = 0;
+
     
     constructor(
         player: Player,  
@@ -53,6 +56,7 @@ export class PlayerMovementController{
     }
 
     public update(deltaTime: number){
+        this.lastSentTime += deltaTime * (1000 / 60); 
         if(this.velocityY != 0 && this.keyTop.isUp && this.keyDown.isUp){
             this.velocityY *= this.drag;
             if(Math.abs(this.velocityY) < .5){
@@ -69,6 +73,7 @@ export class PlayerMovementController{
 
         const newX = this.player.x + this.velocityX;
         const newY = this.player.y + this.velocityY;
+        if(newX == this.player.x && newY == this.player.y) return;
 
         const withinBoundsX = newX >= 0 && newX <= this.mapRect.width;
         const withinBoundsY = newY >= 0 && newY <= this.mapRect.height;
@@ -80,13 +85,17 @@ export class PlayerMovementController{
             this.player.x = newX;
             this.player.y = newY;
 	        ColliderManager.checkTriggers(this.player.collider);
-            NetworkManager.send({
-                type: Network.MessageType.PlayerPositionUpdate,
-                payload: {
-                    x: this.player.x,
-                    y: this.player.y,
-                }
-            });
+
+            if (this.lastSentTime >= this.sendInterval) {
+                this.lastSentTime = 0;
+                NetworkManager.send({
+                    type: Network.MessageType.PlayerPositionUpdate,
+                    payload: {
+                        x: this.player.x,
+                        y: this.player.y,
+                    }
+                });
+            }
         }
     }
 
