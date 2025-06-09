@@ -1,3 +1,4 @@
+import { initGame } from "./game";
 import { initLobby } from "./lobby";
 
 function setup() {

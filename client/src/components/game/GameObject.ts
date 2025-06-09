@@ -4,9 +4,7 @@ import { ColliderManager } from "../../core/ColliderManager";
 
 export interface GameObjectProps {
     id: string,
-    width: number;
-    height: number;
-    color?: number;
+    sprite: string,
     x?: number;
     y?: number;
     isTrigger?: boolean;
@@ -17,14 +15,12 @@ export interface GameObjectProps {
 export class GameObject extends PIXI.Container {
     public id: string;
     public collider: Collider;
-    protected sprite: PIXI.Graphics;
+    protected sprite: PIXI.Sprite;
     private onUpdate?: (deltaTime: number) => void;
 
     constructor({
         id,
-        width,
-        height,
-        color = 0xffffff, // change to sprite later
+        sprite,
         x = 0,
         y = 0,
         isTrigger = false,
@@ -35,10 +31,8 @@ export class GameObject extends PIXI.Container {
 
         this.id = id;
 
-        // Centered drawing (around 0,0)
-        this.sprite = new PIXI.Graphics()
-            .rect(-width / 2, -height / 2, width, height)
-            .fill(color);
+        this.sprite = PIXI.Sprite.from(sprite);
+        this.sprite.anchor.set(0.5, 0.5);
         this.addChild(this.sprite);
 
         this.x = x;
@@ -46,8 +40,8 @@ export class GameObject extends PIXI.Container {
 
         this.collider = new Collider({
             parent: this,
-            width: colliderWidth ?? width,
-            height: colliderHeight ?? height,
+            width: colliderWidth ?? this.sprite.width,
+            height: colliderHeight ?? this.sprite.height,
             isTrigger,
         });
 

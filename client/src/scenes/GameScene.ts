@@ -59,9 +59,7 @@ export class GameScene extends Scene {
 		for (const obj of map.objects) {
 			const wall = new GameObject({
 				id: obj.type,
-				width: 40,
-				height: 40,
-				color: 0x888888,
+				sprite: 'wall',
 				x: obj.position.x,
 				y: obj.position.y
 			});
@@ -73,9 +71,7 @@ export class GameScene extends Scene {
 	private addFinish(map: MapLayout) {
 		const finish = new GameObject({
 			id: "finishpoint",
-			width: 60,
-			height: 60,
-			color: 0x00ff00,
+			sprite: 'wall',
 			x: map.finishpoint.x,
 			y: map.finishpoint.y,
 			isTrigger: true,
@@ -90,9 +86,7 @@ export class GameScene extends Scene {
 	private addOtherPlayer() {
 		const otherPlayer = new GameObject({ 
 			id: "otherplayer",
-			width: 60, 
-			height: 60, 
-			color: 0x888888, 
+			sprite: 'player',
 			x: 0, 
 			y: 0, 
 			isTrigger: true 

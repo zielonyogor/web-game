@@ -85,7 +85,6 @@ export function addPlayer(code: string, player: string, socket: WebSocket) {
     
     if(game.players[0].state == PlayerState.Ready 
         && game.players[1].state == PlayerState.Ready) {
-        console.log("AAAAAAAAAAAAAAAAA");
         game.currentMap = maps[0];
         game.players.forEach(p => {
             NetworkManager.send(p.socket, {

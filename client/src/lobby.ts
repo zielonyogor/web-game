@@ -2,7 +2,6 @@ import getCookie from "@shared/cookie";
 import { NetworkManager } from "./net/NetworkManager";
 
 export function initLobby() {
-    console.log("skisisi");
     NetworkManager.connect();
 
     document.getElementById("main-container")?.classList.add("hidden");

@@ -15,7 +15,6 @@ export class NetworkManager {
             const nickname = getCookie("nickname");
             const code = getCookie("code");
             if(code === null) {
-                alert("AAAAAAAAAAAAAA");
                 document.location.href = '/';
                 return;
             }

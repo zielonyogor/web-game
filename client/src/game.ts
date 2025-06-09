@@ -25,12 +25,14 @@ export async function initGame() {
 
   appDiv.innerHTML = "";
   appDiv.appendChild(app.canvas);
+  await preload();
   
   SceneManager.init(app);
   SceneManager.changeScene(new GameScene(app));
 
   const nickname = getCookie("nickname");
   const code = getCookie("code");
+  
 
   NetworkManager.send({
     type: MessageType.PlayerLoaded,
@@ -40,4 +42,14 @@ export async function initGame() {
     }
   });
   
+}
+
+async function preload() {
+  const assets = [
+      //{ alias: 'background', src: 'https://pixijs.com/assets/tutorials/fish-pond/pond_background.jpg' },
+      { alias: 'player', src: '/public/assets/images/player.png' },
+      { alias: 'wall', src: '/public/assets/images/wall_tile.png' }
+    ];
+  
+  await PIXI.Assets.load(assets);
 }
