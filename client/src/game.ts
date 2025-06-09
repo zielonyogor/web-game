@@ -5,10 +5,8 @@ import "./style.css";
 import { GameScene } from './scenes/GameScene';
 import { NetworkManager } from './net/NetworkManager';
 import { MessageType } from '@shared/Message';
-import getCookie from '@shared/cookie';
 
 
-await document.fonts.ready;
 
 export async function initGame() {
   const app = new PIXI.Application();
@@ -29,27 +27,18 @@ export async function initGame() {
   
   SceneManager.init(app);
   SceneManager.changeScene(new GameScene(app));
-
-  const nickname = getCookie("nickname");
-  const code = getCookie("code");
   
-
   NetworkManager.send({
-    type: MessageType.PlayerLoaded,
-    payload: {
-      playerId: nickname,
-      code,
-    }
+    type: MessageType.PlayerReady,
+    payload: {}
   });
-  
 }
 
 async function preload() {
   const assets = [
-      //{ alias: 'background', src: 'https://pixijs.com/assets/tutorials/fish-pond/pond_background.jpg' },
-      { alias: 'player', src: '/public/assets/images/player.png' },
-      { alias: 'wall', src: '/public/assets/images/wall_tile.png' }
+      //{ alias: 'background', src: '/public/assets/images/background.png' },
+      { alias: 'player', src: '/assets/images/player.png' },
+      { alias: 'wall', src: '/assets/images/wall_tile.png' }
     ];
-  
   await PIXI.Assets.load(assets);
 }

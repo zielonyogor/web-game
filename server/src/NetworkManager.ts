@@ -9,7 +9,7 @@ export class NetworkManager {
         }
 
         socket.onmessage = function (event) {
-            console.log(`[message] Data received from server: ${event.data}`);
+            console.log(`[message] Data received from client: ${event.data}`);
             const data = JSON.parse(event.data.toString()) as Network.Message;
 
             if(data.type == Network.MessageType.PlayerLoaded) {
@@ -17,6 +17,12 @@ export class NetworkManager {
             }
             else if(data.type == Network.MessageType.PlayerPositionUpdate) {
                 GM.updatePlayer(socket, data.payload.angle, data.payload.x, data.payload.y);
+            }
+            else if(data.type == Network.MessageType.PlayerReady){
+                GM.readyPlayer(socket);
+            }
+            else if(data.type == Network.MessageType.PlayerWon) {
+                GM.playerWin(socket);
             }
         }
     }

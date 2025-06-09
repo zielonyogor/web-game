@@ -7,45 +7,46 @@ import { Obstacle } from "../components/game/Obstacle";
 import { NetworkManager } from "../net/NetworkManager";
 import type { MapLayout } from "@shared/maps/Map";
 import { Scene } from "./Scene";
+import * as Network from "@shared/Message";
+import getCookie from "@shared/cookie";
 
 export class GameScene extends Scene {
     private player!: Player;
 	private playerSpawnpoint!: PIXI.Point;
-	private playerMovement!: PlayerMovementController;
+	private playerMovement: PlayerMovementController | undefined;
 	public mainGameUI : MainGameUI;
 
     constructor(app: PIXI.Application) {
         super(app);
 
 		this.mainGameUI = new MainGameUI();
-		this.addChild(this.mainGameUI);
-
+		
 		const mapJSON = sessionStorage.getItem('loadedMap');
 		if (!mapJSON) {
 			console.error("No map loaded from sessionStorage");
 			return;
 		}
 		const map: MapLayout = JSON.parse(mapJSON);
-
+		
 		this.playerSpawnpoint = new PIXI.Point(
 			map.spawnpoint.x,
 			map.spawnpoint.y,
 		);
         this.player = new Player(this.playerSpawnpoint); 
         this.addChild(this.player);
-		this.playerMovement = new PlayerMovementController(this.player);
-
 
 		this.allObjects = [];
-
+		
 		this.addObjects(map);
 		this.addFinish(map);
 		this.addOtherPlayer();
+
+		this.addChild(this.mainGameUI);
     }
 
 	protected update(deltaTime: number) {
 		super.update(deltaTime);
-		this.playerMovement.update(deltaTime);
+		this.playerMovement?.update(deltaTime);
 
 		this.allObjects.forEach(obj => {
 			obj.update(deltaTime);
@@ -77,7 +78,13 @@ export class GameScene extends Scene {
 			isTrigger: true,
 		});
 		finish.collider.addOnTrigger(() => {
-			console.log("You win!");
+			const nickname = getCookie('nickname');
+			NetworkManager.send({
+				type: Network.MessageType.PlayerWon,
+				payload: {
+					id: nickname
+				}
+			})
 		});
 		this.addChild(finish);
 		this.allObjects.push(finish);
@@ -93,5 +100,35 @@ export class GameScene extends Scene {
 		});
 		this.addChild(otherPlayer);
 		this.allObjects.push(otherPlayer);
+	}
+
+	public manageData(data: Network.Message): void {
+		if(data.type == Network.MessageType.PlayerPositionUpdate) {
+			const otherPlayer = this.getObjectById("otherplayer");
+			if(otherPlayer === undefined) {
+				return;
+			}
+			otherPlayer.x = data.payload.x;
+			otherPlayer.y = data.payload.y;
+			otherPlayer.angle = data.payload.angle;
+		}
+		else if(data.type == Network.MessageType.PlayerReady) {
+			this.playerMovement = new PlayerMovementController(this.player);
+		}
+		else if(data.type == Network.MessageType.TimeUpdate) {
+			if(data.payload.time === undefined) return;
+			this.mainGameUI.updateTime(data.payload.time);
+		}
+		else if(data.type == Network.MessageType.PlayerWon) {
+			const nickname = getCookie('nickname');
+			if(nickname === data.payload.id) {
+				this.mainGameUI.showWin();
+				this.playerMovement?.disableInput();
+			}
+			else {
+				this.mainGameUI.showLost();
+				this.playerMovement?.disableInput();
+			}
+		}
 	}
 }

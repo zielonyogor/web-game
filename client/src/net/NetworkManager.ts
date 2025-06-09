@@ -46,17 +46,9 @@ export class NetworkManager {
             sessionStorage.setItem('loadedMap', JSON.stringify(data.payload.map));
             initGame();
         }
-        else if(data.type == Network.MessageType.TimeUpdate) {
+        else {
+            SceneManager.getCurrentScene().manageData(data);
+        }
 
-        }
-        else if(data.type == Network.MessageType.PlayerPositionUpdate) {
-            const otherPlayer = SceneManager.getCurrentScene().getObjectById("otherplayer");
-            if(otherPlayer === undefined) {
-                return;
-            }
-            otherPlayer.x = data.payload.x;
-            otherPlayer.y = data.payload.y;
-            otherPlayer.angle = data.payload.angle;
-        }
     }
 }

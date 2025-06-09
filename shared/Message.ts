@@ -25,14 +25,14 @@ interface MoveGameObjectsMessage {
 interface PlayerWonMessage {
     type: MessageType.PlayerWon;
     payload: {
-        playerId: string;
+        id: string;
     };
 }
 
 interface TimeUpdateMessage {
     type: MessageType.TimeUpdate;
     payload: {
-        time: number;
+        time: number | undefined;
     };
 }
 
@@ -55,11 +55,17 @@ interface PlayerLeftMessage {
     };
 }
 
-interface PlayerReadyMessage {
+interface PlayerLoadedMessage {
     type: MessageType.PlayerLoaded;
     payload: {
         code: string,
         playerId: string,
+    };
+}
+
+interface PlayerReadyMessage {
+    type: MessageType.PlayerReady;
+    payload: {
     };
 }
 
@@ -87,6 +93,7 @@ export type Message =
     | GameStartMessage
     | GameEndMessage
     | PlayerLeftMessage
-    | PlayerReadyMessage
+    | PlayerLoadedMessage
     | LoadSceneMessage
-    | PlayerPositionUpdateMessage;
+    | PlayerPositionUpdateMessage
+    | PlayerReadyMessage;

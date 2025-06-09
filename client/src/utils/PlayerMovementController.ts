@@ -55,6 +55,15 @@ export class PlayerMovementController{
         this.velocityX = -this.speed;
     }
 
+    public disableInput(){
+        this.keyManager.removeKey(this.keyTop);
+        this.keyManager.removeKey(this.keyDown);
+        this.keyManager.removeKey(this.keyRight);
+        this.keyManager.removeKey(this.keyLeft);
+        this.velocityY = 0;
+        this.velocityX = 0;
+    }
+
     public update(deltaTime: number){
         this.lastSentTime += deltaTime * (1000 / 60); 
         if(this.velocityY != 0 && this.keyTop.isUp && this.keyDown.isUp){

@@ -2,31 +2,9 @@ import { MessageType } from "@shared/Message";
 import { NetworkManager } from "./NetworkManager";
 import type { WebSocket } from 'ws';
 import { maps } from "@shared/maps";
-import { MapLayout } from "@shared/maps/Map";
+import { GameSession, GameState, Player, PlayerState } from "./types/GameTypes";
 
-enum GameState{
-    MatchMaking = "MatchMaking",
-    MatchInProgress = "MatchInProgress",
-}
-
-enum PlayerState{ // is this useful???
-    Init = "Init",
-    Ready = "Ready",
-    Won = "Won",
-    InGame = "InGame",
-}
-
-type GameSession = {
-    code: string;
-    players: {
-        nickname: string,
-        state: PlayerState,
-        socket: WebSocket,
-    }[];
-    state: GameState,
-    currentMap?: MapLayout,
-};
-
+const minPlayers = 1; // depends on debugging
 const gameSessions = new Map<string, GameSession>();
 
 export function createGameSession(code: string): GameSession {
@@ -58,6 +36,13 @@ export function getGame(param: string | WebSocket): GameSession | undefined {
     }
 }
 
+export function getPlayer(socket: WebSocket): Player | undefined{
+    const game = getGame(socket);
+    if(game === undefined) return undefined;
+
+    return game.players.find(p => p.socket !== socket);
+}
+
 
 export function gameExists(code: string): boolean {
     return gameSessions.has(code);
@@ -68,53 +53,118 @@ export function addPlayer(code: string, player: string, socket: WebSocket) {
     if(game === undefined) {
         return;
     }
-    if(game.players.length >= 2) {
-        return;
-    }
+    if(game.players.length >= 2) return;
     
     game.players.push({
         nickname: player, 
-        state: PlayerState.Ready,
+        state: PlayerState.Init,
         socket: socket,
     });
     console.log(game);
     
-    if(game.players.length < 2) {
-        return;
-    }
+    if(game.players.length < minPlayers) return;
     
-    if(game.players[0].state == PlayerState.Ready 
-        && game.players[1].state == PlayerState.Ready) {
-        game.currentMap = maps[0];
-        game.players.forEach(p => {
-            NetworkManager.send(p.socket, {
-                type: MessageType.LoadScene,
-                payload: {
-                    url: "/game",
-                    map: maps[0],
-                },
-            })
-        });
-    }
+    game.currentMap = maps[0];
+    game.players.forEach(p => {
+        NetworkManager.send(p.socket, {
+            type: MessageType.LoadScene,
+            payload: {
+                url: "/game",
+                map: maps[0],
+            },
+        })
+    });
 }
 
 export function updatePlayer(socket: WebSocket, angle: number, x: number, y: number) {
-    console.log("updating");
-    const game = getGame(socket);
-    if(game == undefined) {
-        console.log("[error] Couldn't find game of requesting player");
-        return;
-    }
+    const otherPlayer = getPlayer(socket);
+    if(otherPlayer === undefined) return;
+    
+    NetworkManager.send(otherPlayer.socket, {
+        type: MessageType.PlayerPositionUpdate,
+        payload: {
+            angle: angle,
+            x: x,
+            y: y,
+        }
+    });
+}
 
-    const otherPlayer = game.players.find(p => p.socket !== socket);
-    if(otherPlayer) {
-        NetworkManager.send(otherPlayer.socket, {
-            type: MessageType.PlayerPositionUpdate,
-            payload: {
-                angle: angle,
-                x: x,
-                y: y,
-            }
+export function readyPlayer(socket: WebSocket) {
+    const game = getGame(socket);
+    if(game === undefined) return;
+
+    const player = game.players.find(p => p.socket === socket);
+    if(player === undefined) return;
+    player.state = PlayerState.Ready;
+    
+    const allReady = game.players.every(p => p.state === PlayerState.Ready);
+    if (!allReady) return;
+
+    countdown(game);
+}
+
+function countdown(game: GameSession) {
+    let countdown = 2;
+
+    const preMatchInterval = setInterval(() => {
+
+        game.players.forEach(p => {
+            NetworkManager.send(p.socket, {
+                type: MessageType.TimeUpdate,
+                payload: {
+                    time: countdown,
+                },
+            });
         });
-    }
+        countdown--;
+
+        if (countdown < 0) {
+            clearInterval(preMatchInterval);
+            game.players.forEach(p => {
+                NetworkManager.send(p.socket, {
+                    type: MessageType.PlayerReady,
+                    payload: {},
+                });
+            });
+            update(game);
+        }
+    }, 1000);
+}
+
+function update(game: GameSession) {
+    const startTime = Date.now();
+
+    game.matchTimer = setInterval(() => {
+        const now = Date.now();
+        const elapsed = (now - (startTime ?? now)) / 1000;
+
+        game.players.forEach(p => {
+            NetworkManager.send(p.socket, {
+                type: MessageType.TimeUpdate,
+                payload: {
+                    time: parseFloat(elapsed.toFixed(1)),
+                },
+            });
+        });
+
+    }, 100);
+}
+
+export function playerWin(socket: WebSocket) {
+     const game = getGame(socket);
+    if(game === undefined) return;
+
+    const player = game.players.find(p => p.socket === socket);
+    if(player === undefined) return;
+
+    clearInterval(game.matchTimer);
+    game.players.forEach(p => {
+        NetworkManager.send(p.socket, {
+            type: MessageType.PlayerWon,
+            payload: {
+                id: player.nickname,
+            },
+        });
+    });
 }

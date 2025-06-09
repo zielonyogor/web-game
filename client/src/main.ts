@@ -1,12 +1,18 @@
-import { initGame } from "./game";
+import getCookie from "@shared/cookie";
 import { initLobby } from "./lobby";
 
+await document.fonts.ready;
+
 function setup() {
-  console.log("TEST DEBUG LOG");
   const joinBtn = document.getElementById("join-btn") as HTMLButtonElement;
   const hostBtn = document.getElementById("host-btn") as HTMLButtonElement;
 
   const nicknameInput = document.getElementById("nickname") as HTMLInputElement;
+
+  let nickname = getCookie("nickname");
+  if(nickname) {
+    nicknameInput.value = nickname;
+  }
 
   joinBtn.addEventListener("click", () => {
     const codeModal = document.getElementById("code-modal") as HTMLElement;
@@ -33,7 +39,7 @@ function setup() {
   });
 
   hostBtn.addEventListener("click", async () => {
-    const nickname = nicknameInput.value.trim();
+    nickname = nicknameInput.value.trim();
     console.log(`nickname: ${nickname}`);
 
     const res = await fetch(`/api/create-game?nickname=${encodeURIComponent(nickname)}`, {
@@ -53,7 +59,5 @@ function setup() {
 if (document.readyState !== 'loading') {
     setup();
 } else {
-    document.addEventListener('DOMContentLoaded', function () {
-        setup();
-    });
+    document.addEventListener('DOMContentLoaded', setup);
 }

@@ -18,7 +18,6 @@ export function initLobby() {
 
     const copyButton = document.getElementById("copy-code") as HTMLButtonElement;
     copyButton.addEventListener("click", (_) => {
-        console.log("copied");
         navigator.clipboard.writeText(code);
     })
 }
