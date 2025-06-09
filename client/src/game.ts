@@ -36,9 +36,11 @@ export async function initGame() {
 
 async function preload() {
   const assets = [
-      //{ alias: 'background', src: '/public/assets/images/background.png' },
+      { alias: 'background', src: '/public/assets/images/background.png' },
       { alias: 'player', src: '/assets/images/player.png' },
-      { alias: 'wall', src: '/assets/images/wall_tile.png' }
+      { alias: 'wall', src: '/assets/images/wall_tile.png' },
+      { alias: 'obstacle', src: '/assets/images/obstacle.png' },
+      { alias: 'finish_point', src: '/assets/images/finish_point.png' }
     ];
   await PIXI.Assets.load(assets);
 }

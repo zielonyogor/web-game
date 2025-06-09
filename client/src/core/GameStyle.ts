@@ -5,7 +5,7 @@ const fontFamily = ["PixelFont", "sans-serif"];
 export class GameStyle {
     private static _instance: GameStyle;
 
-    public static readonly screenDimension : PIXI.Point = new PIXI.Point(800, 600);
+    public static readonly screenDimension : PIXI.Point = new PIXI.Point(864, 622);
     public basicTextStyle : PIXI.TextStyle;
     public buttonTextStyle : PIXI.TextStyle;
 

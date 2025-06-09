@@ -19,6 +19,8 @@ export class GameScene extends Scene {
     constructor(app: PIXI.Application) {
         super(app);
 
+		this.addChild(PIXI.Sprite.from('background'));
+		
 		this.mainGameUI = new MainGameUI();
 		
 		const mapJSON = sessionStorage.getItem('loadedMap');

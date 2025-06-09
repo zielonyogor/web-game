@@ -6,16 +6,18 @@ import { ColliderManager } from "../core/ColliderManager";
 import { NetworkManager } from "../net/NetworkManager";
 import * as Network from "@shared/Message";
 
-
-export class PlayerMovementController{
+export class PlayerMovementController {
     private player: Player;
     private mapRect: PIXI.Rectangle = new PIXI.Rectangle(0, 0, GameStyle.screenDimension.x, GameStyle.screenDimension.y);
 
-    private keyManager:Keyboard = new Keyboard();
+    private keyManager: Keyboard = new Keyboard();
     private keyTop: Key;
     private keyRight: Key;
     private keyDown: Key;
     private keyLeft: Key;
+
+    private inputX: number = 0;
+    private inputY: number = 0;
 
     private velocityX: number = 0;
     private velocityY: number = 0;
@@ -23,66 +25,76 @@ export class PlayerMovementController{
     private speed: number = 3;
     private drag: number = 0.1;
 
-    private sendInterval = 50; //ms
+    private sendInterval = 50; // ms
     private lastSentTime = 0;
 
-    
     constructor(
-        player: Player,  
-        keys:string[] = ["W","D","S","A"]
-    ){
+        player: Player,
+        keys: string[] = ["W", "D", "S", "A"]
+    ) {
         this.player = player;
 
-        this.keyTop = this.keyManager.addKey(keys[0], this.keyTopPressed.bind(this));
-        this.keyRight = this.keyManager.addKey(keys[1], this.keyRightPressed.bind(this));
-        this.keyDown = this.keyManager.addKey(keys[2], this.keyDownPressed.bind(this));
-        this.keyLeft = this.keyManager.addKey(keys[3], this.keyLeftPressed.bind(this));
+        this.keyTop = this.keyManager.addKey(
+            keys[0],
+            () => this.inputY = -1,
+            () => this.inputY = this.keyDown.isDown ? 1 : 0
+        );
+        this.keyRight = this.keyManager.addKey(
+            keys[1],
+            () => this.inputX = 1,
+            () => this.inputX = this.keyLeft.isDown ? -1 : 0
+        );
+        this.keyDown = this.keyManager.addKey(
+            keys[2],
+            () => this.inputY = 1,
+            () => this.inputY = this.keyTop.isDown ? -1 : 0
+        );
+        this.keyLeft = this.keyManager.addKey(
+            keys[3],
+            () => this.inputX = -1,
+            () => this.inputX = this.keyRight.isDown ? 1 : 0
+        );
     }
 
-    private keyTopPressed(){
-        this.velocityY = -this.speed;
-    }
-
-    private keyRightPressed(){
-        this.velocityX = this.speed;
-    }
-
-    private keyDownPressed(){
-        this.velocityY = this.speed;
-    }
-
-    private keyLeftPressed(){
-        this.velocityX = -this.speed;
-    }
-
-    public disableInput(){
+    public disableInput() {
         this.keyManager.removeKey(this.keyTop);
         this.keyManager.removeKey(this.keyDown);
         this.keyManager.removeKey(this.keyRight);
         this.keyManager.removeKey(this.keyLeft);
-        this.velocityY = 0;
+        this.inputX = 0;
+        this.inputY = 0;
         this.velocityX = 0;
+        this.velocityY = 0;
     }
 
-    public update(deltaTime: number){
-        this.lastSentTime += deltaTime * (1000 / 60); 
-        if(this.velocityY != 0 && this.keyTop.isUp && this.keyDown.isUp){
-            this.velocityY *= this.drag;
-            if(Math.abs(this.velocityY) < .5){
-                this.velocityY = 0;
-            }
-        }
-        if(this.velocityX != 0 && this.keyRight.isUp && this.keyLeft.isUp){
+    public update(deltaTime: number) {
+        this.lastSentTime += deltaTime * (1000 / 60);
+
+        let moveX = this.inputX;
+        let moveY = this.inputY;
+
+        if (moveX !== 0 || moveY !== 0) {
+            const length = Math.hypot(moveX, moveY);
+            moveX = (moveX / length) * this.speed;
+            moveY = (moveY / length) * this.speed;
+        } else {
             this.velocityX *= this.drag;
+            this.velocityY *= this.drag;
 
-            if(Math.abs(this.velocityX) < .5){
-                this.velocityX = 0;
-            }
+            if (Math.abs(this.velocityX) < 0.5) this.velocityX = 0;
+            if (Math.abs(this.velocityY) < 0.5) this.velocityY = 0;
+
+            moveX = this.velocityX;
+            moveY = this.velocityY;
         }
 
-        const newX = this.player.x + this.velocityX;
-        const newY = this.player.y + this.velocityY;
-        if(newX == this.player.x && newY == this.player.y) return;
+        this.velocityX = moveX;
+        this.velocityY = moveY;
+
+        const newX = this.player.x + moveX;
+        const newY = this.player.y + moveY;
+
+        if (newX === this.player.x && newY === this.player.y) return;
 
         const withinBoundsX = newX >= 0 && newX <= this.mapRect.width;
         const withinBoundsY = newY >= 0 && newY <= this.mapRect.height;
@@ -94,7 +106,8 @@ export class PlayerMovementController{
             this.player.rotation = rotation;
             this.player.x = newX;
             this.player.y = newY;
-	        ColliderManager.checkTriggers(this.player.collider);
+
+            ColliderManager.checkTriggers(this.player.collider);
 
             if (this.lastSentTime >= this.sendInterval) {
                 this.lastSentTime = 0;
@@ -110,8 +123,7 @@ export class PlayerMovementController{
         }
     }
 
-
-    public getPlayerPosition():PIXI.Point{
+    public getPlayerPosition(): PIXI.Point {
         return new PIXI.Point(this.player.x, this.player.y);
     }
 }
