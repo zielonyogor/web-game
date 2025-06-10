@@ -131,6 +131,7 @@ export class GameScene extends Scene {
 		}
 		else if(data.type == Network.MessageType.PlayerReady) {
 			this.playerMovement = new PlayerMovementController(this.player);
+			this.mainGameUI.changeTimer();
 		}
 		else if(data.type == Network.MessageType.TimeUpdate) {
 			if(data.payload.time === undefined) return;

@@ -25,10 +25,10 @@ export class Collider{
 
         this.bounds = new PIXI.Rectangle(this.parent.getGlobalPosition().x, this.parent.getGlobalPosition().y, width, height);
 
-        // const sprite = new PIXI.Graphics()
-        //     .rect(-width / 2, -height / 2, width, height)
-        //     .stroke({ color: 0xff00ff, width: 1 });
-        //this.parent.addChild(sprite);
+        const sprite = new PIXI.Graphics()
+            .rect(-width / 2, -height / 2, width, height)
+            .stroke({ color: 0xff00ff, width: 1 });
+        this.parent.addChild(sprite);
     }
 
     public update(): void {
