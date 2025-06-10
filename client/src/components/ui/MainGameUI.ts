@@ -72,7 +72,7 @@ export class MainGameUI extends PIXI.Container {
 
     public showPlayerDisconnected(nickname: string) {
         const wonText = new PIXI.Text({
-            text: `${nickname} has chicken out and disconnected`,
+            text: `${nickname} has rolled out and disconnected`,
             style: GameStyle.Instance.basicTextStyle,
             x: 300,
             y: 220,

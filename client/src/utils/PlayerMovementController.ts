@@ -25,7 +25,7 @@ export class PlayerMovementController {
     private speed: number = 3;
     private drag: number = 0.1;
 
-    private sendInterval = 50; // ms
+    private sendInterval = 30; // ms
     private lastSentTime = 0;
 
     constructor(

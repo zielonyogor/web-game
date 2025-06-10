@@ -4,7 +4,7 @@ import type { WebSocket } from 'ws';
 import { maps } from "@shared/maps";
 import { GameSession, GameState, Player, PlayerState } from "./types/GameTypes";
 
-const minPlayers = 1; // depends on debugging
+const minPlayers = 2; // depends on debugging
 const gameSessions = new Map<string, GameSession>();
 
 export function createGameSession(code: string): GameSession {
@@ -63,11 +63,12 @@ export function addPlayer(code: string, player: string, socket: WebSocket) {
     
     if(game.players.length < minPlayers) return;
     
+    const mapIndex = Math.floor(Math.random() * maps.length);
     game.players.forEach(p => {
         NetworkManager.send(p.socket, {
             type: MessageType.LoadScene,
             payload: {
-                map: maps[Math.floor(Math.random() * maps.length)],
+                map: maps[mapIndex],
             },
         })
     });
