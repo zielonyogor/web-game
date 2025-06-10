@@ -13,22 +13,80 @@ body {
     flex-direction: column;
     align-items: center;
 
-    background: linear-gradient(to bottom right, blue, pink);
+    background: linear-gradient(to bottom right, rgb(108, 108, 243), rgb(255, 208, 216));
+    color: #1A1423;
 }
 
 h1 {
     text-align: center;
 }
 
-input {
+#app {
+    flex-grow: 1;
+}
+
+#main-container {
+    margin: 10rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+input, button {
     font-family: 'PixelFont';
-    font-size: 1rem;
+    font-size: 2rem;
     display: block;
+    border: none;
+    padding: 0.6rem;
+    border-radius: 4px;
+}
+
+input {
+    margin: 20px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
 }
 
 button {
-    font-family: 'PixelFont';
-    font-size: 1rem;
+    font-size: 1.6rem;
+    margin: 10px;
+}
+
+.modal {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    background-color: #65B891;
+    transform: translateX(-50%) translateY(-50%);
+    border-radius: 10px;
+    box-shadow: 0 10px 8px 6px rgba(0, 0, 0, 0.3);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding: 20px;
+}
+
+.modal > input {
+    width: 100%;
+}
+
+.modal > button {
+    width: 70%;
+}
+
+#code-container:not(.hidden) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+canvas {
+    box-shadow: 0 10px 8px 6px rgba(0, 0, 0, 0.3);
 }
 
 .hidden {

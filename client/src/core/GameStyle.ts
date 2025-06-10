@@ -8,13 +8,16 @@ export class GameStyle {
     public static readonly screenDimension : PIXI.Point = new PIXI.Point(864, 622);
     public basicTextStyle : PIXI.TextStyle;
     public buttonTextStyle : PIXI.TextStyle;
+    public titleTextStyle : PIXI.TextStyle;
 
     public primaryColor : PIXI.Color;
     public secondaryColor : PIXI.Color;
+    public teritaryColor : PIXI.Color;
 
     constructor() {
-        this.primaryColor = new PIXI.Color(0x0000ff);
-        this.secondaryColor = new PIXI.Color(0xffffff);
+        this.primaryColor = new PIXI.Color(0x1A1423);
+        this.secondaryColor = new PIXI.Color(0x1A1423);
+        this.teritaryColor = new PIXI.Color(0x65B891);
 
         this.basicTextStyle = new PIXI.TextStyle({
             fontSize: 36,
@@ -28,6 +31,13 @@ export class GameStyle {
             fontFamily: fontFamily,
             align: "center",
             fill: this.secondaryColor,
+        });
+
+        this.titleTextStyle = new PIXI.TextStyle({
+            fontSize: 56,
+            fontFamily: fontFamily,
+            align: "center",
+            fill: this.primaryColor,
         });
     }
 

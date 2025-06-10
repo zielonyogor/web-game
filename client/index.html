@@ -5,15 +5,17 @@
     <link rel="icon" type="image" href="/images/player.png" />
     <link rel="stylesheet" href="src/style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Web game</title>
+    <title>Rolled out</title>
   </head>
   <body>
+    <h1 class="title">Rolled out</h1>
     <div id="app">
       <div class="" id="main-container">
-        <h1 class="title">Web Game</h1>
         <input type="text" class="nickname" id="nickname" name="nickname" placeholder="Enter your nickname" autocomplete="off">
-        <button class="btn" id="join-btn">Join game</button>
-        <button class="btn" id="host-btn">Host game</button>
+        <div class="button-container">
+          <button class="btn" id="join-btn">Join game</button>
+          <button class="btn" id="host-btn">Host game</button>
+        </div>
       </div>
       <div id="code-container" class="hidden">
         <p>Your code: <span id="code-span">000000</span></p>

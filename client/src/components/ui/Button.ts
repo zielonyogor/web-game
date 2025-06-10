@@ -29,7 +29,7 @@ export class Button extends PIXI.Container {
 
         this.background = new PIXI.Graphics()
             .roundRect(0, 0, width, height, 10)
-            .fill(GameStyle.Instance.primaryColor);
+            .fill(GameStyle.Instance.teritaryColor);
 
         this.addChild(this.background);
 
