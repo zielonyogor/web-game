@@ -157,6 +157,7 @@ export function playerWin(socket: WebSocket) {
     if(player === undefined) return;
 
     clearInterval(game.interval);
+    game.state = GameState.MatchFinished;
     game.players.forEach(p => {
         NetworkManager.send(p.socket, {
             type: MessageType.PlayerWon,
@@ -180,6 +181,9 @@ export function disconnectPlayer(socket: WebSocket) {
 
     if (remainingPlayer) {
         if (remainingPlayer.state === PlayerState.Ready) {
+            if(game.state === GameState.MatchFinished) {
+                return;
+            }
             if (game.interval) {
                 clearInterval(game.interval);
                 delete game.interval;

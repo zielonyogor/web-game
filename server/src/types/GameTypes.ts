@@ -4,6 +4,7 @@ import type { WebSocket } from 'ws';
 export enum GameState{
     MatchMaking = "MatchMaking",
     MatchInProgress = "MatchInProgress",
+    MatchFinished = "MatchFinished",
 }
 
 export enum PlayerState{
