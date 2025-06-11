@@ -90,5 +90,6 @@ canvas {
 }
 
 .hidden {
-    display: none;
+    display: none !important;
+    visibility: hidden;
 }

@@ -49,10 +49,6 @@ export class GameScene extends Scene {
 	protected update(deltaTime: number) {
 		super.update(deltaTime);
 		this.playerMovement?.update(deltaTime);
-
-		// this.allObjects.forEach(obj => {
-		// 	obj.update(deltaTime);
-		// });
 	}
 
 	private addObjects(map: MapLayout) {
@@ -138,15 +134,8 @@ export class GameScene extends Scene {
 			this.mainGameUI.updateTime(data.payload.time);
 		}
 		else if(data.type == Network.MessageType.PlayerWon) {
-			const nickname = getCookie('nickname');
-			if(nickname === data.payload.id) {
-				this.mainGameUI.showWin();
-				this.playerMovement?.disableInput();
-			}
-			else {
-				this.mainGameUI.showLost();
-				this.playerMovement?.disableInput();
-			}
+			this.mainGameUI.showGameOver(data.payload.id);
+			this.playerMovement?.disableInput();
 		}
 		else if(data.type === Network.MessageType.PlayerDisconnect) {
 			this.mainGameUI.showPlayerDisconnected(data.payload.id);

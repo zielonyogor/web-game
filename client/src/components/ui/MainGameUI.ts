@@ -13,12 +13,12 @@ export class MainGameUI extends PIXI.Container {
             x: 0,
             y: 0,
         });
-
+        this.pivot.set(0, 0);
         this.isCountdown = true;
 
         this.timeText = new PIXI.Text({
             text: '',
-            style: GameStyle.Instance.basicTextStyle,
+            style: GameStyle.Instance.titleTextStyle,
             x: 0,
             y: 0,
         });
@@ -48,53 +48,21 @@ export class MainGameUI extends PIXI.Container {
             text: '00.00',
             style: GameStyle.Instance.basicTextStyle,
             x: 20,
-            y: 20,
+            y: 4,
         });
         this.addChild(this.timeText);
     }
 
-    public showLost() {
-        const lostText = new PIXI.Text({
-            text: 'You lost',
-            style: GameStyle.Instance.basicTextStyle,
-        });
-        lostText.anchor.set(0.5, 0.5);
-        lostText.position = new PIXI.Point(GameStyle.screenDimension.x/2, GameStyle.screenDimension.y/2 - 100);
-        this.addChild(lostText);
-        
-        const newGameButton = new Button({
-            text: "New match",
-            width: 140,
-            height: 50,
-            x: 400,
-            y: 150,
-            style: GameStyle.Instance.buttonTextStyle,
-        });
-        newGameButton.onClick(newGame);
-
-        this.addChild(newGameButton);
-    }
-
-    public showWin() {
+    public showGameOver(nickname: string) {
         const wonText = new PIXI.Text({
-            text: `You won`,
+            text: `Player ${nickname} has won`,
             style: GameStyle.Instance.titleTextStyle,    
         });
         wonText.anchor.set(0.5, 0.5);
         wonText.position = new PIXI.Point(GameStyle.screenDimension.x/2, GameStyle.screenDimension.y/2 - 100);
         this.addChild(wonText);
         
-        const newGameButton = new Button({
-            text: "New match",
-            width: 140,
-            height: 50,
-            x: 400,
-            y: 300,
-            style: GameStyle.Instance.buttonTextStyle,
-        });
-        newGameButton.onClick(newGame);
-
-        this.addChild(newGameButton);
+        this.newGameButton();
     }
 
     public showPlayerDisconnected(nickname: string) {
@@ -105,19 +73,26 @@ export class MainGameUI extends PIXI.Container {
             y: 220,
         });
         disconnectText.anchor.set(0.5, 0.5);
-        disconnectText.position = new PIXI.Point(GameStyle.screenDimension.x, GameStyle.screenDimension.y);
+        disconnectText.position = new PIXI.Point(GameStyle.screenDimension.x/2, GameStyle.screenDimension.y/2 - 100);
         this.addChild(disconnectText);
         
+        this.newGameButton();
+    }
+
+    private newGameButton() {
+        const width = 160;
+        const height = 50;
+
         const newGameButton = new Button({
             text: "New match",
-            width: 140,
-            height: 50,
-            x: 400,
-            y: 150,
+            width,
+            height,
             style: GameStyle.Instance.buttonTextStyle,
         });
         newGameButton.onClick(newGame);
-
+        newGameButton.pivot.set(width / 2, height / 2);
+        newGameButton.position = new PIXI.Point(GameStyle.screenDimension.x/2, GameStyle.screenDimension.y/2);
+        
         this.addChild(newGameButton);
     }
 }

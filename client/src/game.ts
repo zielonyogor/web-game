@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { SceneManager } from './core/SceneManager';
 import { GameStyle } from './core/GameStyle';
-import "./style.css";
+//import "./style.css";
 import { GameScene } from './scenes/GameScene';
 import { NetworkManager } from './net/NetworkManager';
 import { MessageType } from '@shared/Message';
@@ -17,6 +17,11 @@ export async function initGame() {
     width: GameStyle.screenDimension.x, 
     height: GameStyle.screenDimension.y
   });
+
+  const modalElement = document.getElementById('code-modal');
+  if(modalElement) {
+    modalElement.classList.add('hidden');
+  }
 
   const appDiv = document.getElementById("app");
   if(!appDiv) return;
